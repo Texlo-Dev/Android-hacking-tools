@@ -1,0 +1,53 @@
+;
+; Installation inf for devices supporting Media Transfer Protocol (MTP)
+;
+
+[Version]
+Signature           = "$WINDOWS NT$"
+Class               = WPD
+ClassGUID           = {EEC5AD98-8080-425f-922A-DABF3DE3F69A}
+Provider            = %Provider%
+DriverVer           = 02/06/2012,2.02.06
+CatalogFile         = Dell_wpdmtp.cat
+
+[Manufacturer]
+%Provider%=Dell, NTx86, NTamd64
+
+[Dell.NTx86]
+; MTP: 
+%Dell.MTP.DeviceDesc%=Dell.Install, USB\VID_413C&PID_B10B&MI_00 ; Dell Streak 7
+%Dell.MTP.DeviceDesc%=Dell.Install, USB\VID_413C&PID_B105&MI_00 ; Dell Streak 10
+%Dell.MTP.DeviceDesc%=Dell.Install, USB\VID_413C&PID_B106       ; Dell Streak 10
+
+
+[Dell.NTamd64]
+; MTP: 
+%Dell.MTP.DeviceDesc%=Dell.Install, USB\VID_413C&PID_B10B&MI_00 ; Dell Streak 7
+%Dell.MTP.DeviceDesc%=Dell.Install, USB\VID_413C&PID_B105&MI_00 ; Dell Streak 10
+%Dell.MTP.DeviceDesc%=Dell.Install, USB\VID_413C&PID_B106       ; Dell Streak 10
+
+
+[Dell.Install]
+Include = wpdmtp.inf
+Needs   = WPD.MTP
+
+[Dell.Install.hw]
+Include = wpdmtp.inf
+Needs   = WPD.MTP.Registration
+
+[Dell.Install.Services]
+Include = wpdmtp.inf
+Needs   = WPD.MTP.Services
+
+[Dell.Install.CoInstallers]
+Include = wpdmtp.inf
+Needs = WPD.MTP.CoInstallers
+
+[Dell.Install.Wdf]
+Include = wpdmtp.inf
+Needs = WPD.MTP.Wdf
+UmdfServiceOrder=WpdMtpDriver
+
+[Strings]
+Provider="Dell Inc."
+Dell.MTP.DeviceDesc="Dell Android MTP Interface"

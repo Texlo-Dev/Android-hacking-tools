@@ -1,0 +1,118 @@
+;
+; Android WinUsb driver installation.
+;
+[Version]
+Signature           = "$Windows NT$"
+Class               = AndroidUsbDeviceClass
+ClassGuid           = {3F966BD9-FA04-4ec5-991C-D326973B5128}
+Provider            = %ProviderName%
+DriverVer           = 02/06/2012,2.02.06
+CatalogFile.NTx86   = androidwinusb86.cat
+CatalogFile.NTamd64 = androidwinusba64.cat
+
+;
+; This section seems to be required for WinUsb driver installation.
+; If this section is removed the installer will report an error
+; "Required section not found in INF file".
+;
+[ClassInstall32]
+Addreg = AndroidWinUsbClassReg
+
+[AndroidWinUsbClassReg]
+HKR,,,0,%ClassName%
+HKR,,Icon,,-1
+
+[Manufacturer]
+%ProviderName% = Dell, NTx86, NTamd64
+
+[Dell.NTx86] 
+; ADB
+%CompositeAdbInterface%     = USB_Install, USB\VID_413C&PID_B007&MI_01 ; Dell Streak 5
+%CompositeAdbInterface%     = USB_Install, USB\VID_413C&PID_B104&MI_01 ; Dell Streak 7
+%CompositeAdbInterface%     = USB_Install, USB\VID_413C&PID_B10B&MI_01 ; Dell Streak 7
+%CompositeAdbInterface%     = USB_Install, USB\VID_413C&PID_B102&MI_02 ; Dell Streak 7
+%CompositeAdbInterface%     = USB_Install, USB\VID_413C&PID_B105&MI_01 ; Dell Streak 10
+%CompositeAdbInterface%     = USB_Install, USB\VID_413C&PID_B107&MI_02 ; Dell Streak 10
+%CompositeAdbInterface%     = USB_Install, USB\VID_413C&PID_B103&MI_01 ; Dell Venue
+; Fastboot
+%SingleAdbInterface%        = USB_Install, USB\VID_413C&PID_FFFF       ; Dell Streak 5
+%SingleAdbInterface%        = USB_Install, USB\VID_413C&PID_B007       ; Dell Streak 5
+%SingleAdbInterface%        = USB_Install, USB\VID_413C&PID_B104       ; Dell Streak 7
+%SingleAdbInterface%        = USB_Install, USB\VID_413C&PID_B103       ; Dell Venue
+
+[Dell.NTamd64]
+; ADB
+%CompositeAdbInterface%     = USB_Install, USB\VID_413C&PID_B007&MI_01 ; Dell Streak 5
+%CompositeAdbInterface%     = USB_Install, USB\VID_413C&PID_B104&MI_01 ; Dell Streak 7
+%CompositeAdbInterface%     = USB_Install, USB\VID_413C&PID_B10B&MI_01 ; Dell Streak 7
+%CompositeAdbInterface%     = USB_Install, USB\VID_413C&PID_B102&MI_02 ; Dell Streak 7
+%CompositeAdbInterface%     = USB_Install, USB\VID_413C&PID_B105&MI_01 ; Dell Streak 10
+%CompositeAdbInterface%     = USB_Install, USB\VID_413C&PID_B107&MI_02 ; Dell Streak 10
+%CompositeAdbInterface%     = USB_Install, USB\VID_413C&PID_B103&MI_01 ; Dell Venue
+; Fastboot
+%SingleAdbInterface%        = USB_Install, USB\VID_413C&PID_FFFF       ; Dell Streak 5
+%SingleAdbInterface%        = USB_Install, USB\VID_413C&PID_B007       ; Dell Streak 5
+%SingleAdbInterface%        = USB_Install, USB\VID_413C&PID_B104       ; Dell Streak 7
+%SingleAdbInterface%        = USB_Install, USB\VID_413C&PID_B103       ; Dell Venue
+
+[USB_Install]
+Include = winusb.inf
+Needs   = WINUSB.NT
+
+[USB_Install.Services]
+Include     = winusb.inf
+AddService  = WinUSB,0x00000002,WinUSB_ServiceInstall
+
+[WinUSB_ServiceInstall]
+DisplayName     = %WinUSB_SvcDesc%
+ServiceType     = 1
+StartType       = 3
+ErrorControl    = 1
+ServiceBinary   = %12%\WinUSB.sys
+
+[USB_Install.Wdf]
+KmdfService = WINUSB, WinUSB_Install
+
+[WinUSB_Install]
+KmdfLibraryVersion  = 1.9
+
+[USB_Install.HW]
+AddReg  = Dev_AddReg
+
+[Dev_AddReg]
+HKR,,DeviceInterfaceGUIDs,0x10000,"{F72FE0D4-CBCB-407d-8814-9ED673D0DD6B}"
+
+[USB_Install.CoInstallers]
+AddReg    = CoInstallers_AddReg
+CopyFiles = CoInstallers_CopyFiles
+
+[CoInstallers_AddReg]
+HKR,,CoInstallers32,0x00010000,"WdfCoInstaller01009.dll,WdfCoInstaller","WinUSBCoInstaller2.dll"
+
+[CoInstallers_CopyFiles]
+WinUSBCoInstaller2.dll
+WdfCoInstaller01009.dll
+
+[DestinationDirs]
+CoInstallers_CopyFiles=11
+
+[SourceDisksNames]
+1 = %DISK_NAME%,,,\i386
+2 = %DISK_NAME%,,,\amd64
+
+[SourceDisksFiles.x86]
+WinUSBCoInstaller2.dll  = 1
+WdfCoInstaller01009.dll = 1
+
+[SourceDisksFiles.amd64]
+WinUSBCoInstaller2.dll  = 2
+WdfCoInstaller01009.dll = 2
+
+[Strings]
+ProviderName                = "Dell Inc."
+SingleAdbInterface          = "Dell Android ADB Interface"
+CompositeAdbInterface       = "Dell Android Composite ADB Interface"
+SingleBootLoaderInterface   = "Dell Android Bootloader Interface"
+WinUSB_SvcDesc              = "Dell Android USB Driver"
+DISK_NAME                   = "Dell Android WinUsb installation disk"
+ClassName                   = "Android Devices"
